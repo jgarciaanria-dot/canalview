@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancelar Reserva — Canal View Transfers PTY</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>(function(){ emailjs.init("IHmKDTlsb81Fo79U5"); })();</script>
+
+<style>
+:root{
+  --gold:#d4af37;
+  --gold-light:#f5d76e;
+  --gold-dim:rgba(212,175,55,.15);
+  --black:#000;
+  --dark:#0a0a0a;
+  --card:#111;
+  --text:#fff;
+  --text-muted:#888;
+  --radius:12px;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--black);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* Fondo con gradiente sutil */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:radial-gradient(ellipse at 50% 0%, rgba(212,175,55,.08) 0%, transparent 60%);
+  pointer-events:none;
+}
+
+/* LOGO */
+.page-logo{
+  text-align:center;
+  margin-bottom:32px;
+}
+.page-logo img{
+  height:90px;
+  width:auto;
+  filter:drop-shadow(0 0 12px rgba(212,175,55,.4));
+}
+
+/* CARD */
+.cancel-card{
+  width:100%;
+  max-width:520px;
+  background:var(--card);
+  border:1px solid rgba(212,175,55,.18);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:0 24px 60px rgba(0,0,0,.6);
+}
+
+.card-header{
+  background:linear-gradient(135deg, #0d0d0d, #1a1a1a);
+  padding:32px 36px 28px;
+  text-align:center;
+  border-bottom:1px solid rgba(212,175,55,.12);
+  position:relative;
+}
+.card-header::after{
+  content:"";
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.card-header .badge{
+  display:inline-block;
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:1px solid rgba(212,175,55,.3);
+  padding:5px 16px;
+  border-radius:20px;
+  margin-bottom:16px;
+  background:rgba(212,175,55,.06);
+}
+.card-header h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.card-header p{
+  font-size:13px;
+  color:var(--text-muted);
+  line-height:1.6;
+  max-width:360px;
+  margin:0 auto;
+}
+
+/* POLICY NOTICE */
+.policy-notice{
+  margin:24px 36px 0;
+  background:rgba(212,175,55,.05);
+  border:1px solid rgba(212,175,55,.15);
+  border-radius:10px;
+  padding:16px 18px;
+}
+.policy-notice h3{
+  font-size:12px;
+  font-weight:600;
+  color:var(--gold);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.policy-row{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  margin-bottom:8px;
+  font-size:12px;
+  color:rgba(255,255,255,.55);
+  line-height:1.5;
+}
+.policy-row:last-child{ margin-bottom:0; }
+.policy-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--gold);
+  flex-shrink:0;
+  margin-top:5px;
+}
+
+/* FORM */
+.card-body{ padding:28px 36px 36px; }
+
+.form-group{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-bottom:18px;
+}
+.form-group label{
+  font-size:11px;
+  color:var(--text-muted);
+  font-weight:500;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+}
+input, select, textarea{
+  padding:14px 16px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  background:#1a1a1a;
+  color:#fff;
+  font-size:14px;
+  font-family:'DM Sans',sans-serif;
+  transition:border-color .3s;
+  outline:none;
+  width:100%;
+}
+input:focus, select:focus, textarea:focus{
+  border-color:rgba(212,175,55,.5);
+}
+textarea{
+  min-height:100px;
+  resize:none;
+}
+select option{ background:#1a1a1a; }
+
+.motivo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:18px;
+}
+.motivo-btn{
+  padding:12px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  background:#1a1a1a;
+  color:rgba(255,255,255,.5);
+  font-size:12px;
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;
+  transition:all .3s;
+  text-align:center;
+}
+.motivo-btn:hover{
+  border-color:rgba(212,175,55,.3);
+  color:rgba(255,255,255,.8);
+}
+.motivo-btn.selected{
+  border-color:var(--gold);
+  background:rgba(212,175,55,.08);
+  color:var(--gold);
+  font-weight:600;
+}
+
+.motivo-label{
+  font-size:11px;
+  color:var(--text-muted);
+  font-weight:500;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+  display:block;
+}
+
+/* CHECKBOX */
+.check-wrap{
+  padding:16px;
+  background:rgba(212,175,55,.04);
+  border:1px solid rgba(212,175,55,.15);
+  border-radius:10px;
+  margin-bottom:24px;
+}
+.check-label{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  cursor:pointer;
+}
+.check-label input[type="checkbox"]{ display:none; }
+.check-custom{
+  width:20px;
+  height:20px;
+  min-width:20px;
+  border:2px solid rgba(212,175,55,.4);
+  border-radius:5px;
+  background:transparent;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .3s;
+  margin-top:1px;
+}
+.check-label input:checked + .check-custom{
+  background:var(--gold);
+  border-color:var(--gold);
+}
+.check-label input:checked + .check-custom::after{
+  content:"✓";
+  color:#000;
+  font-size:12px;
+  font-weight:700;
+}
+.check-text{
+  font-size:12px;
+  color:rgba(255,255,255,.6);
+  line-height:1.6;
+}
+
+/* SUBMIT */
+.submit-btn{
+  width:100%;
+  padding:16px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(110deg,
+    #6b4a00 0%, #b8860b 15%, #d4af37 30%,
+    #f5d76e 48%, #f0c830 55%, #c9a020 70%,
+    #9a7000 85%, #6b4a00 100%
+  );
+  color:#000;
+  font-weight:700;
+  font-size:15px;
+  font-family:'DM Sans',sans-serif;
+  cursor:pointer;
+  transition:transform .3s, box-shadow .3s;
+  letter-spacing:.5px;
+  box-shadow:0 4px 20px rgba(212,175,55,.3);
+}
+.submit-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(212,175,55,.5);
+}
+.submit-btn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* SUCCESS */
+.success-state{
+  display:none;
+  text-align:center;
+  padding:20px 0;
+}
+.success-icon{
+  font-size:60px;
+  margin-bottom:20px;
+  display:block;
+  filter:drop-shadow(0 0 16px rgba(212,175,55,.4));
+}
+.success-state h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;
+  margin-bottom:10px;
+}
+.success-state p{
+  font-size:13px;
+  color:var(--text-muted);
+  line-height:1.7;
+  max-width:340px;
+  margin:0 auto 24px;
+}
+.success-reservation{
+  display:inline-block;
+  background:rgba(212,175,55,.1);
+  border:1px solid rgba(212,175,55,.3);
+  color:var(--gold);
+  font-size:14px;
+  font-weight:600;
+  padding:10px 24px;
+  border-radius:30px;
+  margin-bottom:24px;
+  letter-spacing:1px;
+}
+
+/* FOOTER */
+.page-footer{
+  margin-top:28px;
+  text-align:center;
+  font-size:12px;
+  color:rgba(255,255,255,.25);
+}
+.page-footer a{
+  color:var(--gold);
+  text-decoration:none;
+}
+
+/* RESPONSIVE */
+@media(max-width:560px){
+  .card-header{ padding:24px 20px; }
+  .card-body{ padding:20px; }
+  .policy-notice{ margin:16px 20px 0; }
+  .motivo-grid{ grid-template-columns:1fr; }
+  .cancel-card{ border-radius:14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-logo">
+  <img src="logo.png" alt="Canal View Transfers PTY">
+</div>
+
+<div class="cancel-card">
+
+  <!-- HEADER -->
+  <div class="card-header">
+    <div class="badge">✦ Gestión de reserva ✦</div>
+    <h1>Solicitud de <em style="font-style:italic;color:var(--gold);">Cancelación</em></h1>
+    <p>Complete el formulario y nuestro equipo procesará su solicitud a la brevedad posible.</p>
+  </div>
+
+  <!-- POLÍTICA -->
+  <div class="policy-notice">
+    <h3>Política de cancelación</h3>
+    <div class="policy-row"><div class="policy-dot"></div><span>Más de 24 horas de anticipación — sin cargo adicional</span></div>
+    <div class="policy-row"><div class="policy-dot"></div><span>Menos de 24 horas — cargo del 50% del servicio</span></div>
+    <div class="policy-row"><div class="policy-dot"></div><span>Mismo día o No Show — cargo del 100% del servicio</span></div>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="card-body">
+    <form id="cancelForm">
+
+      <div class="form-group">
+        <label>Número de reserva *</label>
+        <input type="text" id="reservationNum" name="reservation_number"
+          placeholder="CVT-2026-001" required
+          style="font-weight:600;letter-spacing:1px;">
+      </div>
+
+      <div class="form-group">
+        <label>Nombre completo *</label>
+        <input type="text" name="client_name" placeholder="Juan Pérez" required>
+      </div>
+
+      <div class="form-group">
+        <label>Correo electrónico *</label>
+        <input type="email" name="client_email" placeholder="correo@ejemplo.com" required>
+      </div>
+
+      <div class="form-group">
+        <label>Fecha del traslado reservado *</label>
+        <input type="date" name="travel_date" required>
+      </div>
+
+      <span class="motivo-label">Motivo de cancelación *</span>
+      <div class="motivo-grid" id="motivoGrid">
+        <button type="button" class="motivo-btn" onclick="selectMotivo('Cambio de planes',this)">Cambio de planes</button>
+        <button type="button" class="motivo-btn" onclick="selectMotivo('Vuelo cancelado',this)">Vuelo cancelado</button>
+        <button type="button" class="motivo-btn" onclick="selectMotivo('Emergencia personal',this)">Emergencia personal</button>
+        <button type="button" class="motivo-btn" onclick="selectMotivo('Error en la reserva',this)">Error en la reserva</button>
+        <button type="button" class="motivo-btn" onclick="selectMotivo('Cambio de fechas',this)">Cambio de fechas</button>
+        <button type="button" class="motivo-btn" onclick="selectMotivo('Otro',this)">Otro</button>
+      </div>
+      <input type="hidden" name="motivo" id="motivoInput">
+
+      <div class="form-group">
+        <label>Comentarios adicionales</label>
+        <textarea name="comments" placeholder="Detalles adicionales sobre su solicitud..."></textarea>
+      </div>
+
+      <!-- CHECKBOX -->
+      <div class="check-wrap">
+        <label class="check-label">
+          <input type="checkbox" id="acceptTerms" required>
+          <span class="check-custom"></span>
+          <span class="check-text">Entiendo que esta es una <strong>solicitud</strong> de cancelación y que un agente confirmará el procesamiento según la política vigente.</span>
+        </label>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Enviar solicitud de cancelación
+      </button>
+
+    </form>
+
+    <!-- SUCCESS -->
+    <div class="success-state" id="successState">
+      <span class="success-icon">✅</span>
+      <h2>Solicitud <em style="font-style:italic;color:var(--gold);">recibida</em></h2>
+      <div class="success-reservation" id="successReservation"></div>
+      <p>Hemos recibido su solicitud de cancelación. Un agente se comunicará con usted en las próximas horas para confirmar el proceso y aplicar la política correspondiente.</p>
+      <a href="https://wa.me/50764075750" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:#25D366;color:#fff;border-radius:10px;text-decoration:none;font-weight:600;font-size:14px;">
+        <svg viewBox="0 0 24 24" fill="white" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Contactar por WhatsApp
+      </a>
+    </div>
+
+  </div>
+</div>
+
+<div class="page-footer">
+  <p>© 2026 Canal View Transfers PTY — <a href="index.html">Volver al inicio</a></p>
+</div>
+
+<script>
+/* ── MOTIVO ── */
+let selectedMotivo = '';
+function selectMotivo(val, btn){
+  selectedMotivo = val;
+  document.getElementById('motivoInput').value = val;
+  document.querySelectorAll('.motivo-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+/* ── URL PARAMS (pre-llenar todos los campos desde el email) ── */
+window.addEventListener('DOMContentLoaded', ()=>{
+  const params = new URLSearchParams(window.location.search);
+  const f = document.getElementById('cancelForm');
+
+  if(params.get('reserva'))   { f.reservation_number.value = params.get('reserva'); }
+  if(params.get('nombre'))    { f.client_name.value = decodeURIComponent(params.get('nombre')); }
+  if(params.get('email'))     { f.client_email.value = decodeURIComponent(params.get('email')); }
+  if(params.get('fecha'))     { f.travel_date.value = params.get('fecha'); }
+
+  // Si vienen con datos pre-llenados, marcar campos como readonly visualmente
+  if(params.get('reserva') && params.get('nombre')){
+    ['reservation_number','client_name','client_email','travel_date'].forEach(name => {
+      const el = f[name];
+      if(el && el.value){
+        el.style.opacity = '0.7';
+        el.style.borderColor = 'rgba(212,175,55,.3)';
+        el.readOnly = true;
+      }
+    });
+  }
+});
+
+/* ── GOOGLE SHEETS ── */
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycby-VIgYV1tFMTEQAxBPABlCx3ChTyz4ZgN8AGwMPMYNMZf92AyTHX-k_90pQeOMe4nhZw/exec";
+
+function sendToSheets(data){
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SHEETS_URL;
+  form.target = 'hidden_iframe';
+  form.style.display = 'none';
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify(data);
+  form.appendChild(input);
+  let iframe = document.getElementById('hidden_iframe');
+  if(!iframe){
+    iframe = document.createElement('iframe');
+    iframe.name = 'hidden_iframe';
+    iframe.id = 'hidden_iframe';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(()=>form.remove(), 2000);
+}
+
+/* ── SUBMIT ── */
+document.getElementById('cancelForm').addEventListener('submit', function(e){
+  e.preventDefault();
+
+  if(!selectedMotivo){
+    alert('Por favor selecciona un motivo de cancelación.');
+    return;
+  }
+  if(!document.getElementById('acceptTerms').checked){
+    alert('Por favor acepta los términos para continuar.');
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  btn.innerText = 'Enviando...';
+  btn.disabled = true;
+
+  const f = this;
+  const now = new Date();
+  const travelDate = new Date(f.travel_date.value);
+  const hoursUntil = (travelDate - now) / (1000 * 60 * 60);
+
+  let politica = '';
+  if(hoursUntil > 24) politica = 'SIN CARGO (más de 24h)';
+  else if(hoursUntil > 0) politica = 'CARGO 50% (menos de 24h)';
+  else politica = 'CARGO 100% (mismo día o pasado)';
+
+  const data = {
+    type: 'cancelacion',
+    reservation_number: f.reservation_number.value,
+    client_name: f.client_name.value,
+    client_email: f.client_email.value,
+    travel_date: f.travel_date.value,
+    motivo: selectedMotivo,
+    comments: f.comments.value,
+    politica_aplicable: politica,
+    fecha_solicitud: now.toLocaleDateString('es-PA'),
+    hora_solicitud: now.toLocaleTimeString('es-PA'),
+    status: 'PENDIENTE DE AGENTE'
+  };
+
+  /* Enviar a Google Sheets pestaña Cancelaciones */
+  sendToSheets(data);
+
+  /* Notificar al agente por EmailJS */
+  emailjs.send("service_3tp3oj3", "template_3loq5tr", {
+    client_name: data.client_name,
+    client_email: data.client_email,
+    reservation_number: data.reservation_number,
+    service_type: '⚠️ SOLICITUD DE CANCELACIÓN',
+    vehicle_type: '—',
+    zone: '—',
+    trip_type: '—',
+    pickup: '—',
+    destination: '—',
+    travel_date: data.travel_date,
+    travel_time: '—',
+    flight: '—',
+    terminal: '—',
+    gate: '—',
+    passengers: '—',
+    bags: '—',
+    estimated_price: politica,
+    comments: `MOTIVO: ${data.motivo} | ${data.comments} | Solicitado: ${data.fecha_solicitud} ${data.hora_solicitud}`
+  });
+
+  /* Notificar por WhatsApp al agente */
+  const waMsg = `⚠️ SOLICITUD DE CANCELACIÓN
+N° Reserva: ${data.reservation_number}
+Cliente: ${data.client_name}
+Email: ${data.client_email}
+Fecha viaje: ${data.travel_date}
+Motivo: ${data.motivo}
+Política: ${data.politica_aplicable}
+Comentarios: ${data.comments || '—'}`;
+
+  /* Mostrar éxito */
+  f.style.display = 'none';
+  const success = document.getElementById('successState');
+  document.getElementById('successReservation').textContent = data.reservation_number;
+  success.style.display = 'block';
+
+  /* Abrir WhatsApp al agente */
+  setTimeout(()=>{
+    window.open("https://wa.me/50764075750?text=" + encodeURIComponent(waMsg));
+  }, 1000);
+});
+</script>
+</body>
+</html>
