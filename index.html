@@ -104,7 +104,7 @@ body{
   border-bottom:1px solid var(--gold-dim);
 }
 .navbar-logo img{
-  height:160px;
+  height:120px;
   width:auto;
   filter:drop-shadow(0 0 14px rgba(212,175,55,.6)) drop-shadow(0 2px 20px rgba(0,0,0,1));
   position:relative;
@@ -112,7 +112,7 @@ body{
 }
 .navbar-logo{
   background:radial-gradient(ellipse at left center, rgba(0,0,0,.55) 0%, transparent 70%);
-  padding:8px 40px 8px 0;
+  padding:8px 40px 8px 40px;
   border-radius:12px;
   flex-shrink:0;
 }
@@ -137,7 +137,7 @@ body{
 }
 .navbar-links a:hover{ color:var(--gold); }
 .navbar-cta-solo{
-  padding:18px 52px;
+  padding:12px 32px;
   border-radius:50px;
   background:linear-gradient(110deg,
     #6b4a00 0%,
@@ -151,7 +151,7 @@ body{
   );
   color:#000;
   text-decoration:none;
-  font-size:14px;
+  font-size:12px;
   font-weight:700;
   letter-spacing:2px;
   text-transform:uppercase;
@@ -159,7 +159,7 @@ body{
   box-shadow:0 4px 24px rgba(212,175,55,.4);
   white-space:nowrap;
   flex-shrink:0;
-  margin-right:20px;
+  margin-right:60px;
 }
 .navbar-cta-solo:hover{
   transform:translateY(-2px);
@@ -240,6 +240,7 @@ body{
   flex-direction:column;
   align-items:center;
   justify-content:center;
+  margin-bottom:80px;
 }
 .hero-btns-bottom{
   position:relative;
@@ -268,13 +269,13 @@ body{
 }
 .hero h1{
   font-family:'Cormorant Garamond',serif;
-  font-size:clamp(2rem,3.8vw,3.8rem);
+  font-size:clamp(1.8rem,3vw,3rem);
   font-weight:700;
   line-height:1.1;
   letter-spacing:-1px;
-  margin-bottom:14px;
+  margin-bottom:12px;
   text-shadow:0 2px 24px rgba(0,0,0,.9);
-  max-width:720px;
+  max-width:680px;
   margin-left:auto;
   margin-right:auto;
   opacity:0;
