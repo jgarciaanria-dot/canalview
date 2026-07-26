@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CANAL VIEW TRANSFERS PTY</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-<script>(function(){ emailjs.init("IHmKDTlsb81Fo79U5"); })();</script>
 
 <style>
 :root{
@@ -227,7 +225,7 @@ body{
 }
 .hero-content{
   position:absolute;
-  top:9%;
+  top:18%;
   left:0;
   right:0;
   text-align:center;
@@ -236,7 +234,7 @@ body{
 }
 .hero-btns-bottom{
   position:absolute;
-  bottom:20%;
+  bottom:14%;
   left:0;
   right:0;
   text-align:center;
@@ -1143,24 +1141,27 @@ textarea{ min-height:110px; resize:none; }
 
   /* HERO */
   .hero-content{
-    top:16%;
-    padding:0 20px;
+    top:22%;
+    padding:0 24px;
   }
   .hero-badge{
     font-size:9px;
     letter-spacing:2px;
     padding:5px 14px;
+    margin-bottom:12px;
   }
   .hero h1{
-    font-size:clamp(1.8rem,8vw,2.8rem);
+    font-size:clamp(1.8rem,8vw,2.6rem);
     letter-spacing:0;
+    margin-bottom:10px;
   }
   .hero-sub{
-    font-size:12px;
-    margin-bottom:20px;
+    font-size:11px;
+    margin-bottom:0;
+    opacity:.85;
   }
   .hero-btns-bottom{
-    bottom:14%;
+    bottom:10%;
     gap:10px;
     padding:0 20px;
   }
@@ -1369,7 +1370,7 @@ textarea{ min-height:110px; resize:none; }
   <div class="hero-content">
     <div class="hero-badge">✦ Transporte Exclusivo en Panamá ✦</div>
     <h1>Tu puerta de entrada<br>a <em>Panamá</em></h1>
-    <p class="hero-sub">Traslados VIP desde y hacia el aeropuerto · Puntualidad y seguridad garantizada</p>
+    <p class="hero-sub">Traslados VIP · Puntualidad y seguridad garantizada</p>
   </div>
   <div class="hero-btns-bottom">
     <button class="btn-gold" onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})">Reservar ahora</button>
@@ -1539,13 +1540,18 @@ textarea{ min-height:110px; resize:none; }
           <div class="form-row">
             <div class="form-group">
               <label>Lugar de recogida</label>
-              <select name="pickup" required>
+              <select name="pickup_type" id="pickupType" required onchange="handlePickupChange(this)">
                 <option value="" disabled selected>Selecciona el punto de recogida</option>
                 <option value="Aeropuerto Internacional de Tocumen (PTY)">✈ Aeropuerto Tocumen (PTY)</option>
                 <option value="Aeropuerto Albrook (PAC)">✈ Aeropuerto Albrook (PAC)</option>
-                <option value="Hotel en Ciudad de Panamá">🏨 Hotel en Ciudad de Panamá</option>
-                <option value="Hotel en Playa / Interior">🏖 Hotel en Playa / Interior</option>
+                <option value="hotel_ciudad">🏨 Hotel en Ciudad de Panamá</option>
+                <option value="hotel_playa">🏖 Hotel en Playa / Interior</option>
               </select>
+              <input type="text" id="pickupHotelInput" name="pickup_hotel"
+                placeholder="Escribe el nombre del hotel..."
+                style="display:none;margin-top:10px;"
+                autocomplete="off">
+              <input type="hidden" name="pickup" id="pickupFinal">
             </div>
             <div class="form-group">
               <label>Destino</label>
@@ -1834,9 +1840,18 @@ textarea{ min-height:110px; resize:none; }
 
 <script>
 /* ── GOOGLE SHEETS ── */
-const SHEETS_URL = "https://script.google.com/macros/s/AKfycby-VIgYV1tFMTEQAxBPABlCx3ChTyz4ZgN8AGwMPMYNMZf92AyTHX-k_90pQeOMe4nhZw/exec";
+const SHEETS_URL = "https://script.google.com/macros/s/AKfycbwIYtsP5GLLhKPvElD7vhLM8S5RxBY6NBBgx66KOEZIe5qAeN9xgU5tc1hj2sNhwxEd-g/exec";
 
 function sendToSheets(data){
+  const iframe = document.getElementById('hidden_iframe') || (() => {
+    const f = document.createElement('iframe');
+    f.name = 'hidden_iframe';
+    f.id = 'hidden_iframe';
+    f.style.display = 'none';
+    document.body.appendChild(f);
+    return f;
+  })();
+
   const form = document.createElement('form');
   form.method = 'POST';
   form.action = SHEETS_URL;
@@ -1849,18 +1864,9 @@ function sendToSheets(data){
   input.value = JSON.stringify(data);
   form.appendChild(input);
 
-  let iframe = document.getElementById('hidden_iframe');
-  if(!iframe){
-    iframe = document.createElement('iframe');
-    iframe.name = 'hidden_iframe';
-    iframe.id = 'hidden_iframe';
-    iframe.style.display = 'none';
-    document.body.appendChild(iframe);
-  }
-
   document.body.appendChild(form);
   form.submit();
-  setTimeout(()=> form.remove(), 2000);
+  setTimeout(()=> form.remove(), 3000);
 }
 
 /* ── REGISTRO FORM ── */
@@ -2018,7 +2024,7 @@ function setService(service, btn){
 }
 
 /* ── STEPS ── */
-function goStep(n){
+async function goStep(n){
   if(n>state.currentStep && !validateStep(state.currentStep)) return;
   document.querySelectorAll('.form-step').forEach(s=>s.classList.remove('active'));
   document.getElementById('step'+n).classList.add('active');
@@ -2033,8 +2039,16 @@ function goStep(n){
     l.classList.toggle('done', i<n);
   }
   state.currentStep = n;
-  if(n===3) buildSummary();
-  document.getElementById('reservas').scrollIntoView({behavior:'smooth',block:'start'});
+
+  if(n===3){
+    document.getElementById('reservationNumber').textContent = 'Cargando...';
+    await buildSummary();
+  }
+
+  // Scroll al form-box siempre
+  setTimeout(()=>{
+    document.querySelector('.form-box').scrollIntoView({behavior:'smooth', block:'start'});
+  }, 100);
 }
 
 function validateStep(n){
@@ -2047,26 +2061,41 @@ function validateStep(n){
   }
   if(n===2){
     if(!state.selectedVehicle){ alert('Por favor selecciona un tipo de vehículo.'); return false; }
-    if(!form.pickup.value.trim()||!form.destination.value.trim()){ alert('Por favor indica origen y destino.'); return false; }
+    // Validar recogida
+    const pickupFinal = document.getElementById('pickupFinal').value.trim();
+    const pickupType = document.getElementById('pickupType').value;
+    if(!pickupType){ alert('Por favor selecciona el lugar de recogida.'); return false; }
+    if((pickupType==='hotel_ciudad'||pickupType==='hotel_playa') && !document.getElementById('pickupHotelInput').value.trim()){
+      alert('Por favor escribe el nombre del hotel de recogida.'); return false;
+    }
+    if(!form.destination.value.trim()){ alert('Por favor indica el destino.'); return false; }
     if(!form.travel_date.value||!form.travel_time.value){ alert('Por favor selecciona fecha y hora.'); return false; }
   }
   return true;
 }
 
-/* ── NÚMERO DE RESERVA ── */
-function generateReservationNumber(){
+/* ── NÚMERO DE RESERVA DESDE SHEETS ── */
+async function generateReservationNumber(){
+  try {
+    const url = SHEETS_URL + '?action=nextNumber';
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data.number) return data.number;
+  } catch(err){
+    console.log('Error obteniendo número:', err);
+  }
+  // Fallback local si falla la consulta
   const year = new Date().getFullYear();
   const counter = parseInt(localStorage.getItem('cvt_counter') || '0') + 1;
   localStorage.setItem('cvt_counter', counter);
-  const num = String(counter).padStart(3,'0');
-  return `CVT-${year}-${num}`;
+  return `CVT-${year}-${String(counter).padStart(3,'0')}`;
 }
 
 let currentReservationNumber = '';
 
 /* ── SUMMARY ── */
-function buildSummary(){
-  currentReservationNumber = generateReservationNumber();
+async function buildSummary(){
+  currentReservationNumber = await generateReservationNumber();
   document.getElementById('reservationNumber').textContent = currentReservationNumber;
 
   const form = document.getElementById('reservaForm');
@@ -2085,7 +2114,7 @@ function buildSummary(){
     {label:'Zona', value: zoneLabel},
     {label:'Modalidad', value: tripLabel},
     {label:'— IDA —', value: ''},
-    {label:'Origen', value: form.pickup.value},
+    {label:'Origen', value: document.getElementById('pickupFinal').value || form.pickup_type ? document.getElementById('pickupFinal').value : '—'},
     {label:'Destino', value: form.destination.value},
     {label:'Fecha', value: formatDate(form.travel_date.value)},
     {label:'Hora', value: form.travel_time.value},
@@ -2232,6 +2261,30 @@ document.addEventListener('click', function(e){
   }
 });
 
+/* ── PICKUP DINÁMICO ── */
+function handlePickupChange(sel){
+  const hotelInput = document.getElementById('pickupHotelInput');
+  const pickupFinal = document.getElementById('pickupFinal');
+  const val = sel.value;
+
+  if(val === 'hotel_ciudad' || val === 'hotel_playa'){
+    hotelInput.style.display = 'block';
+    hotelInput.required = true;
+    hotelInput.focus();
+    // Actualizar pickupFinal cuando escribe el hotel
+    hotelInput.oninput = function(){
+      const zona = val === 'hotel_ciudad' ? 'Ciudad de Panamá' : 'Playa / Interior';
+      pickupFinal.value = this.value ? this.value + ' (' + zona + ')' : '';
+    };
+    pickupFinal.value = '';
+  } else {
+    hotelInput.style.display = 'none';
+    hotelInput.required = false;
+    hotelInput.value = '';
+    pickupFinal.value = val;
+  }
+}
+
 /* ── NAVBAR SCROLL ── */
 window.addEventListener('scroll',()=>{
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY>60);
@@ -2260,12 +2313,11 @@ if(dateInput){
   dateInput.min = today;
 }
 
-/* ── EMAILJS SUBMIT ── */
+/* ── SUBMIT ── */
 const form = document.getElementById('reservaForm');
 form.addEventListener('submit', function(e){
   e.preventDefault();
 
-  // Validar checkbox política
   if(!document.getElementById('acceptPolicy').checked){
     alert('Por favor acepta la política de cancelación para continuar.');
     return;
@@ -2280,6 +2332,7 @@ form.addEventListener('submit', function(e){
   const isRound = state.formTrip === 'round';
 
   const data = {
+    type: 'reserva',
     reservation_number: currentReservationNumber,
     client_name: form.client_name.value,
     client_email: form.client_email.value,
@@ -2289,7 +2342,7 @@ form.addEventListener('submit', function(e){
     vehicle_type: v ? v.name : '',
     zone: state.formZone==='ciudad'?'Ciudad de Panamá':'Playa / Interior',
     trip_type: isRound?'Ida y vuelta':'Solo ida',
-    pickup: form.pickup.value,
+    pickup: document.getElementById('pickupFinal').value || '',
     destination: form.destination.value,
     travel_date: form.travel_date.value,
     travel_time: form.travel_time.value,
@@ -2300,59 +2353,36 @@ form.addEventListener('submit', function(e){
     bags: form.luggage.value,
     comments: form.comments.value,
     estimated_price: '$'+price,
-    // Datos de regreso
-    return_pickup: isRound ? form.return_pickup.value : 'N/A',
-    return_destination: isRound ? form.return_destination.value : 'N/A',
-    return_date: isRound ? form.return_date.value : 'N/A',
-    return_time: isRound ? form.return_time.value : 'N/A',
-    return_flight: isRound ? form.return_flight.value : 'N/A',
+    return_pickup: isRound ? form.return_pickup.value : '',
+    return_destination: isRound ? form.return_destination.value : '',
+    return_date: isRound ? form.return_date.value : '',
+    return_time: isRound ? form.return_time.value : '',
+    return_flight: isRound ? form.return_flight.value : '',
   };
 
-  emailjs.send("service_3tp3oj3","template_3loq5tr",data)
-  .then(()=>{
-    emailjs.send("service_3tp3oj3","template_ak15d8o",data);
-    // Enviar a Google Sheets
-    sendToSheets({...data, type:'reserva'});
-    btn.innerText = '¡Reserva enviada! ✔';
+  // Enviar a Apps Script — él maneja Sheets + emails al agente y cliente
+  sendToSheets(data);
 
-    let mensaje = `Hola, realicé una reserva:
-N° Reserva: ${data.reservation_number}
-Nombre: ${data.client_name}
-Servicio: ${data.service_type}
-Vehículo: ${data.vehicle_type}
-Zona: ${data.zone}
-Modalidad: ${data.trip_type}
+  // Mostrar éxito inmediatamente
+  btn.innerText = '¡Reserva enviada! ✔';
+  btn.style.background = 'linear-gradient(110deg,#1a6b3a,#25a85a)';
+  btn.style.color = '#fff';
 
-✈ IDA:
-Fecha: ${data.travel_date}
-Hora: ${data.travel_time}
-Terminal: ${data.terminal}
-Puerta: ${data.gate||'—'}
-Origen: ${data.pickup}
-Destino: ${data.destination}
-Vuelo: ${data.flight||'—'}`;
-
-    if(isRound){
-      mensaje += `
-
-↩ REGRESO:
-Fecha: ${data.return_date}
-Hora: ${data.return_time}
-Origen: ${data.return_pickup}
-Destino: ${data.return_destination}
-Vuelo: ${data.return_flight||'—'}`;
-    }
-
-    mensaje += `\n\nPrecio estimado: ${data.estimated_price}`;
-
-    window.open("https://wa.me/50764075750?text="+encodeURIComponent(mensaje));
-    form.reset();
-    state.selectedVehicle = null;
-    document.getElementById('returnBlock').style.display = 'none';
-    document.getElementById('acceptPolicy').checked = false;
-    setTimeout(()=>{ goStep(1); btn.innerText='Confirmar y reservar ✓'; btn.disabled=false; renderVehicleGrid(); }, 3000);
-  })
-  .catch(err=>{ console.log(err); btn.innerText='Error al enviar'; btn.disabled=false; });
+  form.reset();
+  state.selectedVehicle = null;
+  document.getElementById('returnBlock').style.display = 'none';
+  document.getElementById('acceptPolicy').checked = false;
+  document.getElementById('pickupFinal').value = '';
+  document.getElementById('pickupHotelInput').style.display = 'none';
+  document.getElementById('pickupHotelInput').value = '';
+  setTimeout(()=>{
+    goStep(1);
+    btn.innerText='Confirmar y reservar ✓';
+    btn.disabled=false;
+    btn.style.background='';
+    btn.style.color='';
+    renderVehicleGrid();
+  }, 3000);
 });
 </script>
 </body>
