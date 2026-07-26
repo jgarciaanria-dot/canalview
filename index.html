@@ -170,6 +170,41 @@ body{
   .navbar-cta-solo{ display:none; margin-right:0; }
   .navbar-links{ display:none; }
 }
+.hero-cta-side{
+  position:absolute;
+  top:50%;
+  right:60px;
+  transform:translateY(-50%);
+  z-index:10;
+  padding:12px 32px;
+  border-radius:50px;
+  background:linear-gradient(110deg,
+    #6b4a00 0%,
+    #b8860b 15%,
+    #d4af37 30%,
+    #f5d76e 48%,
+    #f0c830 55%,
+    #c9a020 70%,
+    #9a7000 85%,
+    #6b4a00 100%
+  );
+  color:#000;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  transition:transform .3s, box-shadow .3s;
+  box-shadow:0 4px 24px rgba(212,175,55,.4);
+  white-space:nowrap;
+}
+.hero-cta-side:hover{
+  transform:translateY(-50%) translateX(-4px);
+  box-shadow:0 8px 32px rgba(212,175,55,.6);
+}
+@media(max-width:900px){
+  .hero-cta-side{ display:none; }
+}
 .hamburger{
   display:none;
   flex-direction:column;
@@ -252,7 +287,7 @@ body{
   gap:16px;
   justify-content:center;
   flex-wrap:wrap;
-  padding-bottom:30vh;
+  padding-bottom:15vh;
   opacity:0;
   animation:fadeUp .6s ease 1.3s forwards;
 }
@@ -1347,7 +1382,6 @@ textarea{ min-height:110px; resize:none; }
     <li><a href="#registro">Registro</a></li>
     <li><a href="https://wa.me/50764075750" target="_blank">Contacto</a></li>
   </ul>
-  <a href="#reservas" class="navbar-cta-solo">Reservar</a>
   <div class="hamburger" id="hamburger" onclick="toggleMenu()">
     <span></span><span></span><span></span>
   </div>
@@ -1365,10 +1399,10 @@ textarea{ min-height:110px; resize:none; }
 <!-- HERO -->
 <section class="hero" id="inicio">
   <div class="hero-content">
-    <div class="hero-badge">✦ Transporte Exclusivo en Panamá ✦</div>
     <h1>Tu puerta de entrada<br>a <em>Panamá</em></h1>
     <p class="hero-sub">Traslados VIP · Puntualidad y seguridad garantizada</p>
   </div>
+  <a href="#reservas" class="hero-cta-side">Reservar</a>
   <div class="hero-btns-bottom">
     <button class="btn-gold" onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})">Reservar ahora</button>
     <button class="btn-outline" onclick="document.getElementById('tarifas').scrollIntoView({behavior:'smooth'})">Ver tarifas</button>
